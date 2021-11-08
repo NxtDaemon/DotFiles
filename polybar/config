@@ -1,0 +1,401 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+background = ${xrdb:color0:#161a1d}
+foreground = #adb1b9
+dark-light = #272A2B 
+active-light = #313435
+
+[bar/nxtbar]
+monitor = ${env:MONITOR:HDMI-0}
+width = 100%
+height = 25
+offset-y = 0.01
+fixed-center = false
+enable-ipc = true
+
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+border-size = 0
+border-color = #00000000
+padding-left = 0
+padding-right = 2
+module-margin-left = 1
+module-margin-right = 2
+
+modules-left = spaces speeddown speedup package-updates-trigger package-updates 
+modules-center = 
+modules-right = uptime filesystem pub-ip wired-network pulseaudio temperature cpu mem time 
+
+font-0 = Iosevka Nerd Font:style=Bold:pixelsize=11;3
+font-1 = JetBrainsMono Nerd Font:size=15;3
+font-2 = Material Design Icons:style=Bold:size=13;3
+font-3 = Dejavu Serif:fontformat=truetype:size=10:antialias=true;3
+
+################################################################################
+; relys on pacman-contrib
+;https://www.reddit.com/r/archlinux/comments/gwccb3/is_there_a_way_to_show_the_number_of_outdated/
+
+[module/package-updates]
+type = custom/ipc
+format-prefix = "  "
+format-prefix-foreground = #7189FF
+hook-0 = ~/.config/polybar/package-updates
+
+[module/package-updates-trigger]
+type = custom/script
+exec = polybar-msg hook package-updates 1 &>/dev/null
+interval = 600
+
+
+################################################################################
+
+[module/uptime]
+;https://github.com/jaagr/polybar/wiki/User-contributed-modules#uptime
+type = custom/script
+exec = uptime | uptime -p | sed "s/up //" | tr -d ","
+interval = 100
+label = %output%
+
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-prefix = "  "
+format-prefix-foreground = #C15D3E
+
+################################################################################
+
+[module/filesystem]
+;https://github.com/jaagr/polybar/wiki/Module:-filesystem
+type = internal/fs
+format-mounted-prefix = "  "
+format-mounted-prefix-foreground = #c7254f
+; Mountpoints to display
+mount-0 = /
+; Seconds to sleep between updates
+interval = 100
+; Display fixed precision values
+fixed-values = true
+; Spacing between entries
+spacing = 4
+; Available tags:
+;   <label-mounted> <bar-free> <bar-used> <ramp-capacity>
+format-mounted = <label-mounted>
+; Available tokens:
+;   %mountpoint% %type% %fsname% %percentage_free% %percentage_used% %total% %free% %used%
+label-mounted = %free%
+
+################################################################################
+
+[module/wired-network]
+;https://github.com/jaagr/polybar/wiki/Module:-network
+type = internal/network
+interface = eth0
+;interface = enp14s0
+interval = 3.0
+
+; Available tokens:
+;   %ifname%    [wireless+wired]
+;   %local_ip%  [wireless+wired]
+;   %essid%     [wireless]
+;   %signal%    [wireless]
+;   %upspeed%   [wireless+wired]
+;   %downspeed% [wireless+wired]
+;   %linkspeed% [wired]
+; Default: %ifname% %local_ip%
+label-connected =  %local_ip% 
+label-disconnected = %ifname% disconnected
+format-connected-prefix = "  "
+format-connected-prefix-foreground = #55aa55
+format-disconnected = <label-disconnected>
+
+################################################################################
+
+[module/pub-ip]
+type = custom/script
+format-prefix = " "
+format-prefix-foreground = #2872fa
+exec = ~/.config/polybar/pub-ip.sh
+interval = 100
+
+################################################################################
+
+[module/temperature]
+;https://github.com/jaagr/polybar/wiki/Module:-temperature
+type = internal/temperature
+; Thermal zone to use
+; To list all the zone types, run
+; $ for i in /sys/class/thermal/thermal_zone*; do echo "$i: $(<$i/type)"; done
+; Default: 0
+thermal-zone = 0
+; Full path of temperature sysfs path
+; Use `sensors` to find preferred temperature source, then run
+; $ for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done
+; to find path to desired file
+; Default reverts to thermal zone setting
+;hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+warn-temperature = 70
+format = <ramp> <label>
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-warn = <ramp> <label-warn>
+format-warn-underline = #c7254f
+label = %temperature-c%
+label-warn =  %temperature-c%
+label-warn-foreground = #F21B3F
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+ramp-foreground = #FF9914
+
+################################################################################
+
+[module/line]
+type = custom/text
+content = |
+content-foreground = 
+
+################################################################################
+
+[module/spaces]
+type = custom/text
+content = %{T3} %{T-}
+
+################################################################################
+
+[module/bspwm]
+type = internal/bspwm
+enable-scroll = true
+label-focused = %name%
+label-focused-background = ${colors.color1}
+;label-focused-underline = ${colors.primary}
+label-focused-padding = 1
+label-focused-foreground = ${colors.foreground}
+label-occupied = %name%
+label-occupied-padding = 1
+label-urgent = %name%!
+label-urgent-background = ${colors.background}
+label-urgent-padding = 1
+label-empty = %name%
+label-empty-foreground = ${colors.foreground}
+label-empty-padding = 1
+format-underline = ${colors.background}
+format-background = ${colors.background}
+format-padding =
+scroll-up = bspwm-desknext
+scroll-down = bspwm-deskprev
+; Separator in between workspaces
+label-separator = |
+
+################################################################################
+
+[module/pulseaudio]
+type = internal/pulseaudio
+format-volume = <ramp-volume><label-volume>
+format-volume-foreground = #F7C548
+label-volume = " %percentage%%"
+label-volume-foreground = ${colors.foreground}
+label-volume-background = ${colors.background}
+format-volume-overline = ${colors.background}
+format-muted-overline = ${colors.background}
+format-volume-underline = ${colors.background}
+format-muted-underline = ${colors.background}
+label-volume-overline = ${colors.background}
+label-muted-overline = ${colors.background}
+label-volume-underline = ${colors.background}
+label-muted-underline = ${colors.background}
+label-muted =   Muted
+label-muted-foreground = #F7C548
+click-right = pavucontrol
+bar-volume-format = %{T8}%fill%%indicator%%empty%%{T-}
+bar-volume-width = 10
+bar-volume-gradient = false
+
+; The fill, indicator and empty icon can be configured like any <label>
+bar-volume-fill = 
+bar-volume-empty = 
+bar-volume-indicator = 雷
+
+; Only applies if <ramp-volume> is used
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+
+ramp-volume-padding-right = 1
+
+################################################################################
+
+[module/now-playing]
+type = custom/script
+tail = true
+;format-prefix = ""
+format = <label>
+exec = ~/.config/polybar/scripts/polybar-now-playing
+click-right = "kill -USR1 $(pgrep --oldest --parent %pid%)"
+format-foreground= #B589D6
+
+################################################################################
+
+[module/time]
+type = internal/date
+interval = 1
+format-prefix="  "
+date =
+date-alt = "%b %d %Y"
+time = "%I:%M:%S"
+format-prefix-foreground = #09BC8A 
+label = %date%%time%
+
+################################################################################
+
+[module/mem]
+type = custom/script
+exec = free -m | sed -n 's/^Mem:\s\+[0-9]\+\s\+\([0-9]\+\)\s.\+/\1/p' 
+format = <label>
+format-prefix = " "
+format-prefix-foreground = #51D6FF
+acpi_backlight=vendor 
+label = %output% MiB
+label-padding = 1
+format-margin = 0 
+label-foreground = ${colors.foreground}
+
+################################################################################
+
+[module/rofi-menu]
+type = custom/text
+content = "Rofi"    
+;content-background = #81A1C1
+content-foreground =${colors.color5}
+click-left = rofi -show drun 
+;content-underline = #4C566A
+content-padding= 1 
+
+################################################################################
+
+[module/powermenu]
+type = custom/menu
+expand-right = true
+format-spacing = 2
+label-open = %{A3:kitty -e bpytop:}  %{A}
+label-open-foreground = ${colors.color1}
+label-close = 
+label-close-foreground = ${colors.foreground}
+label-separator = "|"
+label-separator-foreground = ${colors.foreground}
+menu-0-0 = ""
+menu-0-0-foreground = ${colors.color2}
+menu-0-0-exec = sudo systemctl reboot
+menu-0-1 = ""
+menu-0-1-foreground = ${colors.color1}
+menu-0-1-exec = sudo systemctl poweroff
+menu-0-2 = ""
+menu-0-2-foreground = ${colors.color3}
+menu-0-2-exec = betterlockscreen -l dimblur
+menu-0-3 = ""
+menu-0-3-foreground = ${colors.color4}
+menu-0-3-exec = bspc quit
+
+################################################################################
+
+[module/wlan]
+type = internal/network
+interface = wlp3s0
+interval = 3.0
+click-right=nm-connection-editor
+format-connected =  <label-connected>
+label-connected-padding = 1
+label-disconnected-padding = 1  
+label-connected = %signal%%
+label-connected-foreground = ${colors.foreground}
+format-connected-prefix = "  "
+label-disconnected = "" 
+label-disconnected-foreground = ${colors.foreground} 
+label-connected-background = ${colors.background}
+label-disconnected-background = ${colors.background}
+format-disconnected-prefix = "  "
+format-connected-prefix-foreground = ${colors.color4}
+format-disconnected-prefix-foreground = ${colors.color4}
+;click-right= exec nm-connection-editor
+
+################################################################################
+
+[module/bluetooth]
+type = custom/script
+exec = ~/.config/polybar/scripts/bluetooth.sh
+interval = 2
+click-left = exec blueberry
+click-right = exec ~/.config/polybar/scripts/toggle_bluetooth.sh
+format-padding = 1
+format-background = #000000
+format-foreground = #ffffff
+
+################################################################################
+
+[module/cpu]
+type = internal/cpu
+interval = 2.5
+format = <label> 
+format-padding = 1
+format-margin = 0
+format-prefix = " "
+format-prefix-foreground = #98c379
+label = %{F} %{F-}%percentage%%
+
+format-connected-prefix-foreground = #98c379
+
+################################################################################
+
+[module/xwindow]
+type = internal/xwindow
+label = %title% 
+label-maxlen = 20
+label-foreground = ${colors.foreground} 
+label-padding = 1 
+; Used instead of label when there is no window title
+label-empty = ""
+;label-empty-foreground = ${color.blue-light}
+label-empty-padding = 2
+
+################################################################################
+
+[module/speeddown]
+type = internal/network
+interface = eth0
+label-connected = "%downspeed%"
+; label-connected-minlen = 7
+format-connected-prefix = "  "
+format-connected-prefix-foreground = #8dc776
+
+################################################################################
+
+[module/speedup]
+type = internal/network
+interface = eth0  
+; label-connected-minlen = 7
+label-connected = "%upspeed%"
+format-connected-prefix = "  "
+format-connected-prefix-foreground = #c26f6f
+
+################################################################################
