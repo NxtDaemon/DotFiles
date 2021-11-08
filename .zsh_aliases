@@ -1,0 +1,32 @@
+# Tools 
+alias py3='python3'
+alias sherlock="sudo python2 /opt/Osint/sherlock/sherlock/sherlock.py"
+alias ghunt="sudo python3 /opt/Osint/Ghunt/ghunt.py"
+alias volatility2="/opt/Forensics/Volatility2/volatility_2.6_lin64_standalone"
+alias volatility3="python3 /opt/Forensics/volatility3/vol.py"
+alias commix="python3 /opt/WebTools/Commix/commix.py"
+alias turgen="java -jar /opt/TurgenSystem/turgen.jar"
+alias stegsolve="java -jar /opt/Steg/Stegsolve/stegsolve.jar"
+alias lightcord="/opt/Lightcord/lightcord"
+alias TwitterAnalysis="python3 /opt/Osint/tweets_analyzer/tweets_analyzer.py"
+# #
+# # Routines 
+alias reload='source ~/.zshrc'
+alias nessusInit='sudo systemctl start nessusd && systemctl --no-pager status nessusd'
+alias nessusEnd='sudo /bin/systemctl stop nessusd.service && echo "\n Ended Process :)"'
+alias anonInit='sudo anonsurf start && sudo anonsurf status && anonsurf myip'
+alias anonEnd='sudo anonsurf stop && sudo anonsurf status && anonsurf myip'
+# #
+# # Personal Scripts
+alias AddHost="python3 /opt/ManagementScripts/HostEditor/AddHost.py"
+alias vpn="python3 /opt/ManagementScripts/Multi-VPN/VPN.py"
+alias verify="python3 ~/Documents/Verify.py/verify.py"
+alias serve="python3 ~/Documents/UpdogManagement/UpdogManagement.py"
+alias legacy="/opt/ManagementScripts/Legacy-Management/Legacy"
+# #
+# # Variables
+export PATH=$PATH:/home/nxtdaemon/.local/bin
+export PATH=$PATH:/usr/share/doc/python3-impacket/examples/
+# #
+# # Aliases 
+alias aptsearch="apt-cache search"
