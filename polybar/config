@@ -159,7 +159,7 @@ type = custom/script
 format-prefix = " "
 format-prefix-foreground = #2872fa
 exec = ~/.config/polybar/pub-ip.sh
-interval = 100
+interval = 60
 click-right = echo "Hidden" > /tmp/sh
 
 ################################################################################
