@@ -29,4 +29,3 @@ export PATH=$PATH:/home/nxtdaemon/.local/bin
 export PATH=$PATH:/usr/share/doc/python3-impacket/examples/
 # #
 # # Aliases 
-alias aptsearch="apt-cache search"
